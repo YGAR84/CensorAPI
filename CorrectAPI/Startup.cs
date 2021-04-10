@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CorrectAPI.ObsceneWordProvider;
+using CorrectAPI.StringChecker;
 
 namespace CorrectAPI
 {
@@ -12,6 +13,8 @@ namespace CorrectAPI
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddSingleton<IObsceneWordProvider, DefaultObsceneWordProvider>();
+			services.AddScoped<ObsceneStringChecker>();
+			services.AddControllers();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -23,14 +26,14 @@ namespace CorrectAPI
 			}
 
 			app.UseRouting();
+			
 
 			app.UseEndpoints(endpoints =>
 			{
-				endpoints.MapGet("/", async context =>
-				{
-					await context.Response.WriteAsync("Hello World!");
-				});
+				endpoints.MapControllers();
 			});
+
+	
 		}
 	}
 }

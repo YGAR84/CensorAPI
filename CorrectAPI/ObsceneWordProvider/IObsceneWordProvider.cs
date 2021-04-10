@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CorrectAPI.ObsceneWordProvider
 {
 	public interface IObsceneWordProvider
 	{
-		public bool IsObsceneWord(string word);
+		public Task<bool> IsObsceneWord(string word);
 	}
 }

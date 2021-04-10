@@ -19,11 +19,10 @@ namespace CorrectAPI.StringChecker
 			var wasObsceneWord = false;
 			for (var i = 0; i < words.Length; ++i)
 			{
-				if (_obsceneWordProvider.IsObsceneWord(words[i]))
-				{
-					words[i] = GetCensoredWord(words[i]);
-					wasObsceneWord = true;
-				}
+				if (!_obsceneWordProvider.IsObsceneWord(words[i]).Result) continue;
+
+				words[i] = GetCensoredWord(words[i]);
+				wasObsceneWord = true;
 			}
 
 			return !wasObsceneWord ? input : string.Join(' ', words);
