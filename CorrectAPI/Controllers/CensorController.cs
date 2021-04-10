@@ -2,6 +2,8 @@
 using System.Text;
 using System.Threading.Tasks;
 using CorrectAPI.ObsceneWordProvider;
+using CorrectAPI.Requests;
+using CorrectAPI.Responses;
 using CorrectAPI.StringChecker;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,12 +22,9 @@ namespace CorrectAPI.Controllers
 
 		[HttpPost]
 		[Route("censor")]
-		public async Task<string> CensorString()
+		public async Task<CensorResponse> GetCensoredString([FromBody] CensorRequest censorRequest)
 		{
-			using StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8);
-			var body = await reader.ReadToEndAsync();
-			return _obsceneStringChecker.GetCensoredString(body);
-			//			return _obsceneStringChecker.GetCensoredString(input);
+			return await _obsceneStringChecker.GetCensoredString(censorRequest);
 		}
 
 	}

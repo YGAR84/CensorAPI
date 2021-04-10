@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using CorrectAPI.ObsceneWordProvider;
+using CorrectAPI.Requests;
+using CorrectAPI.Responses;
 
 namespace CorrectAPI.StringChecker
 {
@@ -13,25 +16,26 @@ namespace CorrectAPI.StringChecker
 			_obsceneWordProvider = obsceneWordProvider;
 		}
 
-		public string GetCensoredString(string input)
+		public async Task<CensorResponse> GetCensoredString(CensorRequest censorRequest)
 		{
-			var words = input.Split(' ');
-			var wasObsceneWord = false;
-			for (var i = 0; i < words.Length; ++i)
+			if (censorRequest.Content is null || censorRequest.Content == string.Empty)
 			{
-				if (!_obsceneWordProvider.IsObsceneWord(words[i]).Result) continue;
-
-				words[i] = GetCensoredWord(words[i]);
-				wasObsceneWord = true;
+				return new CensorResponse();
+			}
+			
+			if (censorRequest.CensorCharacter is null || censorRequest.CensorCharacter == string.Empty)
+			{
+				censorRequest.CensorCharacter = "*";
+			} 
+			else if (await _obsceneWordProvider.IsObsceneWord(censorRequest.CensorCharacter))
+			{
+				censorRequest.CensorCharacter = "*";
 			}
 
-			return !wasObsceneWord ? input : string.Join(' ', words);
+			var censoredString = await _obsceneWordProvider.GetCensorString(censorRequest.Content, censorRequest.CensorCharacter);
+
+			return new CensorResponse {CensoredContent = censoredString};
 		}
 
-
-		private string GetCensoredWord(string word)
-		{
-			return new string('*', word.Length);
-		}
 	}
 }
